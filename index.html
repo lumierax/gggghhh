@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0b1020"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="بصيرة AI"/>
+  <meta name="description" content="مساعد عربي للبرمجة وتحليل البيانات، يمكنه استخدام نماذج محلية بدون اشتراك."/>
+  <link rel="manifest" href="./manifest.webmanifest"/>
+  <link rel="icon" type="image/png" href="./assets/icon192.png"/>
+  <link rel="apple-touch-icon" href="./assets/icon192.png"/>
+  <link rel="stylesheet" href="./styles.css"/>
+  <title>بصيرة AI — مبرمج ومحلل شخصي</title>
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar" id="sidebar" aria-label="المحادثات">
+      <div class="brand">
+        <div class="brand-mark">◈</div>
+        <div><strong>بصيرة<span class="gradtext"> AI</span></strong><span class="brand-sub">مساعدك الشخصي</span></div>
+        <button class="icon-button mobile-only" id="close-sidebar" aria-label="إغلاق القائمة">✕</button>
+      </div>
+      <button class="new-chat" id="new-chat"><span>＋</span> محادثة جديدة</button>
+      <div class="sidebar-section-label">المحادثات المحفوظة على جهازك</div>
+      <div id="history-list" class="history-list"></div>
+      <div class="sidebar-bottom">
+        <div class="privacy-note"><span>◉</span> بيانات المحادثات تُحفظ في هذا المتصفح فقط. لا حاجة إلى تسجيل حساب.</div>
+        <button class="nav-link" id="open-settings-side">⚙ &nbsp; الإعدادات والمحرك</button>
+      </div>
+    </aside>
+    <div id="sidebar-scrim" class="scrim" hidden></div>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-right">
+          <button class="icon-button mobile-only" id="open-sidebar" aria-label="القائمة">☰</button>
+          <div class="heading"><strong id="chat-heading">محادثة جديدة</strong><span id="chat-subtitle">البرمجة والتحليل في مكان واحد</span></div>
+        </div>
+        <div class="topbar-left">
+          <span id="engine-status" class="status-pill"><span class="status-dot"></span> لم يُحمّل النموذج</span>
+          <button class="icon-button" id="open-settings" title="الإعدادات" aria-label="الإعدادات">⚙</button>
+        </div>
+      </header>
+
+      <section class="modes-wrap" aria-label="تخصص المساعد">
+        <div class="modes" id="modes">
+          <button class="mode active" data-mode="code">⌘ <span>مبرمج</span></button>
+          <button class="mode" data-mode="analysis">▤ <span>محلل</span></button>
+          <button class="mode" data-mode="general">✦ <span>مساعد عام</span></button>
+        </div>
+        <span class="privacy-tag">🔒 بدون اشتراك</span>
+      </section>
+
+      <div class="scroll-area" id="scroll-area">
+        <section class="welcome" id="welcome">
+          <div class="hero-emblem">◈</div>
+          <p class="eyebrow">مساعد ذكاء اصطناعي شخصي</p>
+          <h1>فكّر. برمج. <span class="gradtext">حلّل.</span></h1>
+          <p class="hero-text">اسأل بالعربية، راجع الأكواد، أو ارفع ملف CSV لتحليل أرقامه بدقة. الحسابات الإحصائية تعمل حتى قبل تشغيل النموذج.</p>
+          <div class="feature-grid">
+            <button class="feature" data-prompt="صمّم لي خطة لبناء تطبيق آيفون عربي. اذكر المكونات والخطوات والاختبارات."><span class="feature-icon violet">⌘</span><b>تصميم البرامج</b><small>تخطيط، كتابة أكواد، ومراجعة</small></button>
+            <button class="feature" id="sample-code"><span class="feature-icon blue">⌁</span><b>فحص كود تجريبي</b><small>تنبيهات أولية دون نموذج أو اشتراك</small></button>
+            <button class="feature" data-prompt="أريد تحليلًا احترافيًا لملف بيانات. ما الخطوات والمقاييس المهمة؟"><span class="feature-icon amber">▤</span><b>تحليل البيانات</b><small>متوسطات، ارتباطات، قيم شاذة</small></button>
+            <button class="feature" id="sample-analysis"><span class="feature-icon green">▥</span><b>تجربة تقرير فوري</b><small>شاهد التحليل دون تحميل نموذج</small></button>
+          </div>
+          <div class="welcome-notice">التشغيل المحلي على الآيفون تجريبي ويعتمد على الذاكرة وWebGPU؛ النموذج الصغير لا يعادل أكبر نماذج البرمجة السحابية.</div>
+        </section>
+        <section class="messages" id="messages" aria-live="polite" aria-label="المحادثة"></section>
+      </div>
+
+      <section class="composer-area">
+        <div class="attachment-preview" id="attachment-preview" hidden>
+          <div class="attached-name"><span>▥</span> <b id="attachment-name"></b> <small id="attachment-details"></small></div>
+          <button class="icon-button" id="remove-attachment" title="إزالة الملف" aria-label="إزالة الملف">✕</button>
+        </div>
+        <div class="composer">
+          <input id="file-picker" type="file" accept=".csv,.txt,.md,.json,.js,.jsx,.ts,.tsx,.py,.swift,.html,.css,.sql,.yml,.yaml" hidden/>
+          <button id="attach-button" class="composer-tool" aria-label="إرفاق ملف" title="إرفاق CSV أو كود أو نص">＋</button>
+          <textarea id="prompt" rows="1" placeholder="اكتب سؤالك أو أرسل كودًا أو ملف بيانات..." aria-label="رسالتك"></textarea>
+          <button id="send-button" class="send-button" aria-label="إرسال">↑</button>
+        </div>
+        <div class="under-composer">
+          <span id="notice">التقارير الإحصائية وفحص الكود الأولي يعملان دون نموذج؛ المحادثة تحتاج محركًا متوافقًا.</span>
+          <button id="instant-report" hidden>عرض التحليل الإحصائي فورًا ←</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title">
+    <form method="dialog" class="modal-header"><div><p class="eyebrow">ضبط تطبيقك الشخصي</p><h2 id="settings-title">المحرك والإعدادات</h2></div><button class="icon-button" value="close" aria-label="إغلاق">✕</button></form>
+    <div class="modal-body">
+      <p class="setting-title">توافق جهازك الحالي</p>
+      <p class="device-note" id="device-check" role="status" aria-live="polite">جارٍ فحص الإمكانات المتاحة في المتصفح...</p>
+      <p class="setting-title">أين يعمل الذكاء الاصطناعي؟</p>
+      <div class="choice-grid">
+        <label class="choice"><input type="radio" name="engine" value="local" checked/><span><b>على الآيفون</b><small>لا مفتاح API ولا اشتراك. يحتاج Safari يدعم WebGPU وذاكرة كافية؛ قد لا يعمل على iPhone 12.</small></span></label>
+        <label class="choice"><input type="radio" name="engine" value="server"/><span><b>خادمك الخاص (اختياري)</b><small>وصل خادمًا متوافقًا مع Ollama أو OpenAI لتشغيل نموذج أقوى مجانًا على جهازك الآخر.</small></span></label>
+      </div>
+      <div id="local-options">
+        <label class="field-label" for="model-select">النموذج المحلي</label>
+        <select id="model-select" class="field-input">
+          <option value="Qwen2.5-Coder-0.5B-Instruct-q4f16_1-MLC">Qwen2.5 Coder 0.5B — أنسب للمتصفح على الآيفون</option>
+          <option value="Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC">Qwen2.5 Coder 1.5B — أقوى لكن قد تتوقف صفحة Safari بسبب الذاكرة</option>
+        </select>
+        <div class="progress-wrap" id="progress-wrap" hidden><div id="progress-bar"></div></div>
+        <p class="engine-info" id="progress-text">تنزيل النموذج لأول مرة يحتاج الإنترنت ومساحة تخزين. بعد التخزين المؤقت قد يعمل دون اتصال، حسب الجهاز والمتصفح.</p>
+        <button id="load-model" class="primary-action" type="button">تنزيل وتحميل النموذج المحلي</button>
+      </div>
+      <div id="server-options" hidden>
+        <label class="field-label" for="server-url">رابط واجهة المحادثة الكاملة (OpenAI-compatible)</label>
+        <input class="field-input ltr" id="server-url" type="url" placeholder="https://your-server.example/v1/chat/completions" autocomplete="off"/>
+        <label class="field-label" for="server-model">اسم النموذج المتاح في الخادم</label>
+        <input class="field-input ltr" id="server-model" type="text" value="qwen2.5-coder:7b"/>
+        <p class="engine-info">أمان: لا تحفظ مفاتيح API داخل هذا التطبيق. يفضل خادمك الشخصي مع HTTPS؛ Safari قد يمنع خادم HTTP عند فتح الموقع بـ HTTPS. يحتاج الخادم إلى السماح لاتصالات المتصفح (CORS).</p>
+      </div>
+      <div class="modal-rule"></div>
+      <p class="setting-title">خصوصية المحادثات</p>
+      <div class="modal-actions"><button id="export-chat" class="secondary-action" type="button">↓ تصدير المحادثة</button><button id="clear-data" class="danger-action" type="button">مسح بيانات المحادثات</button></div>
+      <p class="footnote">هذا مشروع أولي، وليس تطبيقًا مُثبتًا من App Store. جودة الإجابات تتغير كثيرًا حسب النموذج.</p>
+    </div>
+  </dialog>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
